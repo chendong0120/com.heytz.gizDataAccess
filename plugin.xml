@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<plugin id="com.heytz.GWSdkBLEwrapper" version="0.3.4" xmlns="http://apache.org/cordova/ns/plugins/1.0"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+    <name>GWSdkBLEwrapper</name>
+    <js-module name="GWSdkBLEwrapper" src="www/GWSdkBLEwrapper.js">
+        <clobbers target="cordova.plugins.GWSdkBLEwrapper"/>
+    </js-module>
+    <platform name="ios">
+        <config-file parent="/*" target="config.xml">
+            <feature name="GWSdkBLEwrapper">
+                <param name="ios-package" value="GWSdkBLEwrapper"/>
+            </feature>
+        </config-file>
+        <source-file src="src/ios/GWSdkBLEwrapper.m"/>
+        <framework custom="true" src="GizDataAccess.framework"/>
+    </platform>
+    <!--<platform name="android">-->
+        <!--<config-file parent="/*" target="res/xml/config.xml">-->
+            <!--<feature name="gwsdkwrapper">-->
+                <!--<param name="android-package" value="com.heytz.gwsdkwrapper.gwsdkwrapper"/>-->
+            <!--</feature>-->
+        <!--</config-file>-->
+        <!--<config-file parent="/*" target="AndroidManifest.xml"></config-file>-->
+        <!--<source-file src="src/android/gwsdkwrapper.java" target-dir="src/com/heytz/gwsdkwrapper/" />-->
+        <!--<source-file src="libs/json-lib-2.4-jdk15.jar" target-dir="libs" />-->
+        <!--<source-file src="libs/XPGWiFiSDK.jar" target-dir="libs" />-->
+        <!--<source-file src="libs/armeabi/libsimpleconfiglib.so" target-dir="libs/armeabi/" />-->
+        <!--<source-file src="libs/armeabi/libXPGConnect.so" target-dir="libs/armeabi/" />-->
+        <!--<source-file src="libs/simpleconfiglib.jar" target-dir="libs" />-->
+    <!--</platform>-->
+</plugin>
