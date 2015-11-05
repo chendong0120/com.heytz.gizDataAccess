@@ -14,8 +14,9 @@
     // Member variables go here.
     NSString * _appId;
     GizDataAccessSource* gdaSource ;
+    GizDataAccessLogin* gdaLogin;
 }
--(void)gizDataAccessDidLogin:(CDVInvokedUrlCommand *)command;
+-(void)login:(CDVInvokedUrlCommand *)command;
 -(void)writeData:(CDVInvokedUrlCommand *)command;
 -(void)readData:(CDVInvokedUrlCommand *)command;
 @property (strong,nonatomic) CDVInvokedUrlCommand * commandHolder;
@@ -27,12 +28,19 @@
 
 -(void)pluginInitialize:(CDVInvokedUrlCommand *) command{
     gdaSource = [[GizDataAccessSource alloc] initWithDelegate:self];
+    gdaLogin = [[GizDataAccessLogin alloc] initWithDelegate:self];
+
 }
 
+-(void)login:(CDVInvokedUrlCommand *)command
+{
+    [gdaLogin loginAnonymous];
+}
 - (void)gizDataAccessDidLogin:(GizDataAccessLogin *)login uid:(NSString *)uid token:(NSString *)token result:(GizDataAccessErrorCode)result message:(NSString *)message {
     if(result == kGizDataAccessErrorNone) {
         // 登录成功
         // ……
+        NSLog(@"登录成功");
     }
 }
 /**
