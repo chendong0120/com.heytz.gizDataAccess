@@ -8,22 +8,25 @@
 
 #import <Foundation/Foundation.h>
 #import <GizDataAccess/GizDataAccess.h>
-//#import <Cordova/CDV.h>
+#import <Cordova/CDV.h>
 
 @interface GWSdkBLEwrapper: CDVPlugin<GizDataAccessSourceDelegate> {
     // Member variables go here.
     NSString * _appId;
+    GizDataAccessSource* gdaSource ;
 }
 -(void)gizDataAccessDidLogin:(CDVInvokedUrlCommand *)command;
 -(void)writeData:(CDVInvokedUrlCommand *)command;
 -(void)readData:(CDVInvokedUrlCommand *)command;
-
-@implementation GWSdkBLEwrapper
-
 @property (strong,nonatomic) CDVInvokedUrlCommand * commandHolder;
 
 @end
--(void)pluginInitialize{
+@implementation GWSdkBLEwrapper
+
+
+
+-(void)pluginInitialize:(CDVInvokedUrlCommand *) command{
+    gdaSource = [[GizDataAccessSource alloc] initWithDelegate:self];
 }
 
 - (void)gizDataAccessDidLogin:(GizDataAccessLogin *)login uid:(NSString *)uid token:(NSString *)token result:(GizDataAccessErrorCode)result message:(NSString *)message {
@@ -39,10 +42,10 @@
 
  */
 -(void)writeData:(CDVInvokedUrlCommand *)command{
-    NSString @token=command.arguments[0];
-    NSString @productKey=command.arguments[1];
-    NSString @deviceSn=command.arguments[2];
-     NSString @data=command.arguments[3];
+    NSString *token=command.arguments[0];
+    NSString *productKey=command.arguments[1];
+    NSString *deviceSn=command.arguments[2];
+    NSArray *data=command.arguments[3];
     
     [gdaSource saveData:token productKey:productKey deviceSN:deviceSn data:data];
 }
@@ -57,10 +60,10 @@
 //获取数据时，需指定起止时间段。如果limit值为0将只返回20条数据，若skip值为负数，则获取失败。数据获取结果，通过获取数据的委托返回。获取到的数据，按照时间排序，最新的数据排在最前面。
 
 -(void)readData:(CDVInvokedUrlCommand *)command{
-    NSString @token=command.arguments[0];
-    NSString @productKey=command.arguments[1];
-    NSString @deviceSn=command.arguments[2];
-    NSString @data=command.arguments[3];
+    NSString *token=command.arguments[0];
+    NSString *productKey=command.arguments[1];
+    NSString *deviceSn=command.arguments[2];
+    NSString *data=command.arguments[3];
     int16_t startTime=command.arguments[4];
     int16_t endTime=command.arguments[5];
 
@@ -94,3 +97,5 @@
         }
     }
 }
+@end
+
