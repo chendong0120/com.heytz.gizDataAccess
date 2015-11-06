@@ -28,7 +28,7 @@
 
 -(void)pluginInitialize:(CDVInvokedUrlCommand *) command{
     gdaSource = [[GizDataAccessSource alloc] initWithDelegate:self];
-    gdaLogin = [[GizDataAccessLogin alloc] initWithDelegate:self];
+    //gdaLogin = [[GizDataAccessLogin alloc] initWithDelegate:self];
 
 }
 
@@ -78,9 +78,8 @@
     NSString *token=command.arguments[0];
     NSString *productKey=command.arguments[1];
     NSString *deviceSn=command.arguments[2];
-    NSString *data=command.arguments[3];
-    int16_t startTime=command.arguments[4];
-    int16_t endTime=command.arguments[5];
+    int16_t startTime=command.arguments[3];
+    int16_t endTime=command.arguments[4];
 
      [gdaSource loadData:token productKey:productKey deviceSN:deviceSn startTime:startTime endTime:endTime limit:20 skip:0];
 }
