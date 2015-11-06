@@ -34,6 +34,8 @@
 
 -(void)login:(CDVInvokedUrlCommand *)command
 {
+  self.commandHolder = command;
+
     [gdaLogin loginAnonymous];
 }
 - (void)gizDataAccessDidLogin:(GizDataAccessLogin *)login uid:(NSString *)uid token:(NSString *)token result:(GizDataAccessErrorCode)result message:(NSString *)message {
@@ -41,6 +43,11 @@
         // 登录成功
         // ……
         NSLog(@"登录成功");
+         NSDictionary *d = [NSDictionary dictionaryWithObjectsAndKeys:
+                                   @"登陆成功", @"state",
+                                   nil];
+          CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:d];
+                [self.commandDelegate sendPluginResult:pluginResult callbackId:self.commandHolder.callbackId];
     }
 }
 /**
