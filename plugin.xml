@@ -14,18 +14,24 @@
         <source-file src="src/ios/GWSdkBLEwrapper.m"/>
         <framework custom="true" src="GizDataAccess.framework"/>
     </platform>
-    <!--<platform name="android">-->
-        <!--<config-file parent="/*" target="res/xml/config.xml">-->
-            <!--<feature name="gwsdkwrapper">-->
-                <!--<param name="android-package" value="com.heytz.gwsdkwrapper.gwsdkwrapper"/>-->
-            <!--</feature>-->
-        <!--</config-file>-->
-        <!--<config-file parent="/*" target="AndroidManifest.xml"></config-file>-->
-        <!--<source-file src="src/android/gwsdkwrapper.java" target-dir="src/com/heytz/gwsdkwrapper/" />-->
-        <!--<source-file src="libs/json-lib-2.4-jdk15.jar" target-dir="libs" />-->
-        <!--<source-file src="libs/XPGWiFiSDK.jar" target-dir="libs" />-->
-        <!--<source-file src="libs/armeabi/libsimpleconfiglib.so" target-dir="libs/armeabi/" />-->
-        <!--<source-file src="libs/armeabi/libXPGConnect.so" target-dir="libs/armeabi/" />-->
-        <!--<source-file src="libs/simpleconfiglib.jar" target-dir="libs" />-->
-    <!--</platform>-->
+    <platform name="android">
+        <config-file parent="/*" target="res/xml/config.xml">
+            <feature name="GWSdkBLEwrapper">
+                <param name="android-package" value="com.heytz.GWSdkBLEwrapper.GWSdkBLEwrapper"/>
+            </feature>
+        </config-file>
+        <config-file parent="/*" target="AndroidManifest.xml">
+            <uses-permission android:name="android.permission.INTERNET" />
+            <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+            <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+            <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+            <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+            <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+            <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+        </config-file>
+        <source-file src="src/android/GWSdkBLEwrapper.java" target-dir="src/com/heytz/GWSdkBLEwrapper/" />
+        <source-file src="libs/json-lib-2.4-jdk15.jar" target-dir="libs" />
+        <source-file src="libs/GizDataAccessSdk-1.1.0.150427.jar" target-dir="libs" />
+    </platform>
 </plugin>

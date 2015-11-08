@@ -26,9 +26,14 @@
 @implementation GWSdkBLEwrapper
 
 -(void)pluginInitialize:(CDVInvokedUrlCommand *) command{
-    if (_appId==nil) {
-        _appId=@"8110dc34b3dc49b386bcbc692473bd28";
-       GizDataAccess *da = [GizDataAccess startWithAppID:_appId];
+    NSString *appid=command.arguments[0];
+    if (appid!=nil) {
+    if (!_appId) {
+        [GizDataAccess startWithAppID:_appId];
+     }
+    }else {
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"appid is null!"];
+          [self.commandDelegate sendPluginResult:pluginResult callbackId:self.commandHolder.callbackId];
     }
     //Init SDK
     
@@ -42,7 +47,15 @@
 {
     self.commandHolder = command;
     [self pluginInitialize:command];
-    [gdaLogin loginAnonymous];
+    
+    NSString *username=command.arguments[1];
+    NSString *password=command.arguments[2];
+    if(username&&password){
+         [gdaLogin login:username password:password];
+    }else{
+        [gdaLogin loginAnonymous];
+    }
+   
 }
 
 - (void)gizDataAccessDidLogin:(GizDataAccessLogin *)login uid:(NSString *)uid token:(NSString *)token result:(GizDataAccessErrorCode)result message:(NSString *)message {
@@ -65,10 +78,10 @@
  
  */
 -(void)writeData:(CDVInvokedUrlCommand *)command{
-    NSString *token=command.arguments[0];
-    NSString *productKey=command.arguments[1];
-    NSString *deviceSn=command.arguments[2];
-    NSArray *data=command.arguments[3];
+    NSString *token=command.arguments[1];
+    NSString *productKey=command.arguments[2];
+    NSString *deviceSn=command.arguments[3];
+    NSArray *data=command.arguments[4];
     self.commandHolder = command;
     [self pluginInitialize:command];
     [gdaSource saveData:token productKey:productKey deviceSN:deviceSn data:data];
@@ -78,19 +91,47 @@
     if(result == kGizDataAccessErrorNone) {
         // 数据上传成功
         // ……
+        NSDictionary *d = [NSDictionary dictionaryWithObjectsAndKeys:
+                           @"数据上传成功", @"state",
+                           message,@"message",
+                           nil];
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:d];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:self.commandHolder.callbackId];
+    }else{
+        
+        NSDictionary *d = [NSDictionary dictionaryWithObjectsAndKeys:
+                           @"数据上传失败", @"state",
+                           message,@"message",
+                           nil];
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:d];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:self.commandHolder.callbackId];
     }
 }
 
 //获取数据时，需指定起止时间段。如果limit值为0将只返回20条数据，若skip值为负数，则获取失败。数据获取结果，通过获取数据的委托返回。获取到的数据，按照时间排序，最新的数据排在最前面。
 
 -(void)readData:(CDVInvokedUrlCommand *)command{
-    NSString *token=command.arguments[0];
-    NSString *productKey=command.arguments[1];
-    NSString *deviceSn=command.arguments[2];
-    int16_t startTime=command.arguments[3];
-    int16_t endTime=command.arguments[4];
+    self.commandHolder = command;
+    [self pluginInitialize:command];
     
-    [gdaSource loadData:token productKey:productKey deviceSN:deviceSn startTime:startTime endTime:endTime limit:20 skip:0];
+    NSString *token=command.arguments[1];
+    NSString *productKey=command.arguments[2];
+    NSString *deviceSn=command.arguments[3];
+    int16_t startTime=command.arguments[4];
+    int16_t endTime=command.arguments[5];
+    
+    int  limit=20;
+    int  skip=0;
+    if(command.arguments[6]!=nil||command.arguments[6]!=0){
+        limit=command.arguments[6];
+    }
+    if(command.arguments[7]!=nil){
+        limit=command.arguments[7];
+    }
+
+    [gdaSource loadData:token productKey:productKey deviceSN:deviceSn startTime:startTime endTime:endTime limit:limit skip:skip];
+    
+    
 }
 /*实现获取数据的委托方法
  
@@ -118,6 +159,15 @@
             
             NSLog(@"sn:%@ productkey:%@ uid:%@ nTS:%@ attributes:%@", sn, productkey, uid, nTS, attributes);
         }
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:data];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:self.commandHolder.callbackId];
+    }else{
+        NSDictionary *d = [NSDictionary dictionaryWithObjectsAndKeys:
+                           @"数据获取失败", @"state",
+                           message,@"message",
+                           nil];
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:d];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:self.commandHolder.callbackId];
     }
 }
 @end
