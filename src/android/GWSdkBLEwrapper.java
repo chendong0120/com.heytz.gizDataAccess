@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,7 +21,7 @@ import java.util.List;
  */
 public class GWSdkBLEwrapper extends CordovaPlugin {
 
-    private CallbackContext airLinkCallbackContext;
+    private CallbackContext cordovaCallbackContext;
     private Context context;
     private String _appId;
     private GizDataAccessLogin gdalogin;
@@ -31,17 +32,20 @@ public class GWSdkBLEwrapper extends CordovaPlugin {
             if (result.getResult() == 0 && uid != null && token != null) {
                 JSONObject json = new JSONObject();
                 try {
-                    json.put("uid",uid);
-                    json.put("token",token);
+                    json.put("uid", uid);
+                    json.put("token", token);
                     // 登录成功
                     // ……
-                    PluginResult pr = new PluginResult(PluginResult.Status.OK,json);
-                    airLinkCallbackContext.sendPluginResult(pr);
+                    PluginResult pr = new PluginResult(PluginResult.Status.OK, json);
+                    cordovaCallbackContext.sendPluginResult(pr);
                 } catch (JSONException e) {
                     //e.printStackTrace();
                     PluginResult pr = new PluginResult(PluginResult.Status.ERROR, e.getMessage());
-                    airLinkCallbackContext.sendPluginResult(pr);
+                    cordovaCallbackContext.sendPluginResult(pr);
                 }
+            } else {
+                PluginResult pr = new PluginResult(PluginResult.Status.ERROR, message);
+                cordovaCallbackContext.sendPluginResult(pr);
             }
         }
     };
@@ -52,7 +56,7 @@ public class GWSdkBLEwrapper extends CordovaPlugin {
                 // 上传成功
                 // ……
                 PluginResult pr = new PluginResult(PluginResult.Status.OK, "success");
-                airLinkCallbackContext.sendPluginResult(pr);
+                cordovaCallbackContext.sendPluginResult(pr);
             }
         }
 
@@ -73,7 +77,7 @@ public class GWSdkBLEwrapper extends CordovaPlugin {
                         }
                     }
                     PluginResult pr = new PluginResult(PluginResult.Status.OK, jsonArray);
-                    airLinkCallbackContext.sendPluginResult(pr);
+                    cordovaCallbackContext.sendPluginResult(pr);
                 } else {
                     System.out.println("暂无数据");
                 }
@@ -95,6 +99,7 @@ public class GWSdkBLEwrapper extends CordovaPlugin {
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
+        cordovaCallbackContext = callbackContext;
         /**
          * 判断是否设置了appId
          */
@@ -105,7 +110,7 @@ public class GWSdkBLEwrapper extends CordovaPlugin {
             }
         } else {
             PluginResult pr = new PluginResult(PluginResult.Status.ERROR, "appId is null");
-            airLinkCallbackContext.sendPluginResult(pr);
+            cordovaCallbackContext.sendPluginResult(pr);
             return false;
         }
         /**
@@ -116,9 +121,11 @@ public class GWSdkBLEwrapper extends CordovaPlugin {
             return true;
         }
         if (action.equals("writeData")) {
-            List<String> dataList = null;
-            for (int o = 0; o < args.getJSONArray(4).length(); o++) {
-                dataList.add((String) args.getJSONArray(4).get(o));
+            List<String> dataList = new ArrayList<String>();
+            JSONArray jsonArray = args.getJSONArray(4);
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                dataList.add(jsonArray.get(i).toString());
             }
             this.writeData(args.toString(1), args.toString(2), args.toString(3), dataList, callbackContext);
             return true;
@@ -144,7 +151,7 @@ public class GWSdkBLEwrapper extends CordovaPlugin {
      */
     public void login(String username, String password, CallbackContext callbackContext) {
 
-        if (username != null && !username.isEmpty() && password != null && !password.isEmpty()) {
+        if (username != null  && password != null &&username != "null"  && password != "null"&& (!username.isEmpty()) && (!password.isEmpty())) {
             gdalogin.login(username, password);
         } else {
             gdalogin.loginAnonymous();
